@@ -1,0 +1,16 @@
+{:source-paths ["src/cljs"]
+ :aliases {:cider-cljs {:main-opts
+                        ["-m" "nrepl.cmdline" "--middleware"
+                         "[cider.nrepl/cider-middleware,cider.piggieback/wrap-cljs-repl]"]}}
+ :nrepl {:port 9000}
+ :dependencies [[cider/cider-nrepl "0.27.4"]
+                [cljs-ajax "0.8.4"]
+                [lilactown/helix "0.1.5"]
+                [cider/piggieback "0.5.3"]]
+ :builds {:mood-tracker {:target :browser
+                         :compiler-options {:output-feature-set :es6}
+                         :output-dir "resources/public/js"
+                         :asset-path "/js"
+                         :modules {:main {:init-fn mood-tracker.core/init}}
+                         :devtools {:http-root "resources/public"
+                                    :http-port 4200}}}}
