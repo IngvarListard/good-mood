@@ -1,10 +1,5 @@
 # mood-tracker
-
-A Clojure library designed to ... well, that part is up to you.
-
-## Usage
-
-FIXME
+Based on https://dev.to/kelvinmai/how-to-build-a-full-stack-clojure-project-2223
 
 ## License
 
