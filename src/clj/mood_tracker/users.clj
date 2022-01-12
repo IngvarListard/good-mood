@@ -8,7 +8,6 @@
 
 (defn create-user
   [{:keys [parameters]}]
-  (println parameters)
   (let [data (:body parameters)
         created-user-id (db/insert-user db/config data)]
     {:status 201
@@ -17,7 +16,7 @@
 (defn get-user-by-id
   [{:keys [parameters]}]
   (let [id (:path parameters)]
-    {:status 201
+    {:status 200
      :body (db/get-user-by-id db/config id)}))
 
 (defn update-user

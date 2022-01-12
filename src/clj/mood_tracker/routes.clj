@@ -48,9 +48,15 @@
                                     :happiness-grade s/Int
                                     :details s/Any
                                     :report-date s/Str}}
-                :handler create-report}
-         }]
+                :handler create-report}}]
    ["/:id" {:parameters {:path {:id s/Int}}
-            :get dummy
-            :put dummy
-            :delete dummy}]])
+            :get get-report-by-id
+            :put {:parameters {:body {:user-id s/Int
+                                      :comment s/Str
+                                      :mood-grade s/Int
+                                      :activity-grade s/Int
+                                      :happiness-grade s/Int
+                                      :details s/Any
+                                      :report-date s/Str}}
+                  :handler update-report}
+            :delete delete-report}]])

@@ -11,7 +11,7 @@ RETURNING id;
 
 -- :name update-report-by-id :! :1
 UPDATE reports
-SET user_id = :user-id, comment = :comment, mood_grade = :mood-grade, activity_grade = :activity-grade, happiness_grade = :happiness-grade, details = :details, report_date = :report-date::timestamp
+SET user_id = :user-id, comment = :comment, mood_grade = :mood-grade, activity_grade = :activity-grade, happiness_grade = :happiness-grade, details = :details::json, report_date = :report-date::timestamp
 WHERE id = :id;
 
 -- :name delete-report-by-id :! :1
