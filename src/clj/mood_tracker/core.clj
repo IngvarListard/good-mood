@@ -12,7 +12,9 @@
                                           coerce-response-middleware]]
             [reitit.coercion.schema]
             [muuntaja.core :as m]
-            [mood-tracker.routes :refer [ping-routes users-routes]]))
+            [mood-tracker.routes :refer [ping-routes users-routes reports-routes]]
+            [mood-tracker.middleware :refer [letter-case-request letter-case-response]]
+            [camel-snake-kebab.core :as csk]))
 
 
 (defonce server (atom nil))
@@ -25,12 +27,19 @@
     (println "Stopping server")
     (reset! server nil)))
 
+;; (def m (m/create
+;;         (assoc-in
+;;          m/default-options
+;;          [:formats "application/json" :encoder-opts]
+;;          {:encode-key-fn csk/->kebab-case})))
+
 (def app
   (ring/ring-handler
    (ring/router
     ["/api"
      ping-routes
-     users-routes]
+     users-routes
+     reports-routes]
     {:data {:coercion reitit.coercion.schema/coercion
             :muuntaja m/instance
             :middleware [[wrap-cors
@@ -39,12 +48,14 @@
                          parameters-middleware
                          format-negotiate-middleware
                          format-request-middleware
-                         exception-middleware
+                         ;;[letter-case-request {:from :snake_case :to :kebab-case}]
+                         ;; exception-middleware
                          format-response-middleware
                          coerce-exceptions-middleware
                          coerce-request-middleware
-                         coerce-response-middleware
-                         ]}})
+                         ;;[letter-case-response {:to :snake_case}]
+                         coerce-response-middleware]}})
+
    (ring/routes
     (ring/redirect-trailing-slash-handler)
     (ring/create-default-handler
@@ -63,13 +74,9 @@
   (stop-server)
   (-main))
 
-;; Вопросы
-;; - что делает :refer в require
-;; - defonce что это и зачем
-;; - как работает when-not. Очевидно, но нужны пруфы
-;; - как работают мультиметоды. Прочитать подробнее
 (comment
   (restart-server)
+  (stop-server)
   @server
   (-main)
   (app {:request-method :get

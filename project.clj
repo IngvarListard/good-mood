@@ -8,7 +8,9 @@
                  [ring-cors "0.1.13"]
                  [http-kit "2.5.3"]
                  [org.postgresql/postgresql "42.3.1"]
-                 [com.layerware/hugsql "0.5.1"]]
+                 [com.layerware/hugsql "0.5.1"]
+                 [camel-snake-kebab "0.4.2"]
+                 [hugsql-adapter-case "0.1.0"]]
   :repl-options {:init-ns mood-tracker.core}
   :aliases {"runserver" ["run" "-m" "mood-tracker.core"]}
   :source-paths ["src" "src/clj"])

@@ -1,5 +1,7 @@
 (ns mood-tracker.db
-  (:require [hugsql.core :as hugsql]))
+  (:require [hugsql.core :as hugsql]
+            [hugsql.parameters]
+            [hugsql-adapter-case.adapters :refer [kebab-adapter]]))
 
 (def config
   {:classname "org.postgresql.Driver"
@@ -8,7 +10,8 @@
    :user "postgres"
    :password "postgres"})
 
-(hugsql/def-db-fns "reports.sql")
+(hugsql/def-db-fns "sql/reports.sql" {:adapter (kebab-adapter)})
+(hugsql/def-db-fns "sql/users.sql" {:adapter (kebab-adapter)})
 
 (comment
   (create-reports-and-user-table config)
