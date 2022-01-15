@@ -2,11 +2,11 @@ version: '3'
 
 services:
   db:
-    container_name: mood_tracker_db
+    container_name: good_mood_db
     image: postgres:14
     ports:
       - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mood_tracker
+      POSTGRES_DB: good_mood_dev

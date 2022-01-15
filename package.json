@@ -1,24 +1,9 @@
 {
-  "name": "mood-tracker",
-  "version": "1.0.0",
-  "description": "A Clojure library designed to ... well, that part is up to you.",
-  "main": "index.js",
-  "directories": {
-    "doc": "doc",
-    "test": "test"
+  "devDependencies": {
+    "shadow-cljs": "^2.16.5"
   },
-  "scripts": {
-    "start": "shadow-cljs watch mood-tracker",
-    "build-styles": "npx tailwindcss build -i src/cljs/tailwind.css -o resources/public/css/main.css --watch"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
+  "dependencies":{
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-refresh": "^0.11.0",
-    "shadow-cljs": "^2.16.12",
-    "tailwindcss": "^3.0.11"
+    "react-dom": "^17.0.2"
   }
 }
