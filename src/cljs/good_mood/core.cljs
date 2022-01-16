@@ -11,12 +11,15 @@
     [good-mood.events]
     [reitit.core :as reitit]
     [reitit.frontend.easy :as rfe]
-    [clojure.string :as string])
+    [clojure.string :as string]
+    [good-mood.pages.reports.index :refer [reports-page]])
   (:import goog.History))
 
 (defn nav-link [uri title page]
   [:a.navbar-item
    {:href   uri
+    ;; ага, тут значит уже работа с атомами. Получаем атом видимо как-то по имени через /subscribe
+    ;; а потом получаем значение этого атома
     :class (when (= page @(rf/subscribe [:common/page-id])) :is-active)}
    title])
 
@@ -33,8 +36,13 @@
                [:div#nav-menu.navbar-menu
                 {:class (when @expanded? :is-active)}
                 [:div.navbar-start
+                 ;; ага, вспомнил. Тут звезда, чтобы страницы не перезагружались.
+                 ;; Т.е. по-настоящему на бэке существует только / - домашняя страница, и
+                 ;; с неё происходит загрузка всего контента. Эта ебала как-то решалась
+                 ;; в настройках роутера когда я писал на vue, и можно было убрать эти звезды
                  [nav-link "#/" "Home" :home]
-                 [nav-link "#/about" "About" :about]]]]))
+                 [nav-link "#/about" "About" :about]
+                 [nav-link "#/reports" "Отчеты" :reports]]]]))
 
 (defn about-page []
   [:section.section>div.container>div.content
@@ -60,7 +68,9 @@
            :view        #'home-page
            :controllers [{:start (fn [_] (rf/dispatch [:page/init-home]))}]}]
      ["/about" {:name :about
-                :view #'about-page}]]))
+                :view #'about-page}]
+     ["/reports" {:name :reports
+                  :view #'reports-page}]]))
 
 (defn start-router! []
   (rfe/start!

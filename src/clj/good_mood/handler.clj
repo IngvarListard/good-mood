@@ -27,30 +27,30 @@
   :start
   (ring/ring-handler
    (ring/router
-    ["/api"
-     {:coercion spec-coercion/coercion
-      :muuntaja formats/instance
-      :swagger {:id ::api}
-      :middleware [ ;; query-params & form-params
-                   parameters/parameters-middleware
-                   ;; content-negotiation
-                   muuntaja/format-negotiate-middleware
-                   ;; encoding response body
-                   muuntaja/format-response-middleware
-                   ;; exception handling
-                   coercion/coerce-exceptions-middleware
-                   ;; decoding request body
-                   muuntaja/format-request-middleware
-                   ;; coercing response bodys
-                   coercion/coerce-response-middleware
-                   ;; coercing request parameters
-                   coercion/coerce-request-middleware
-                   ;; multipart
-                   multipart/multipart-middleware]}
-     [(home-routes)
-      (service-routes)
-      (reports-routes)
-      (users-routes)]])
+    [(home-routes)
+     ["/api"
+      {:coercion spec-coercion/coercion
+       :muuntaja formats/instance
+       :swagger {:id ::api}
+       :middleware [ ;; query-params & form-params
+                    parameters/parameters-middleware
+                    ;; content-negotiation
+                    muuntaja/format-negotiate-middleware
+                    ;; encoding response body
+                    muuntaja/format-response-middleware
+                    ;; exception handling
+                    coercion/coerce-exceptions-middleware
+                    ;; decoding request body
+                    muuntaja/format-request-middleware
+                    ;; coercing response bodys
+                    coercion/coerce-response-middleware
+                    ;; coercing request parameters
+                    coercion/coerce-request-middleware
+                    ;; multipart
+                    multipart/multipart-middleware]}
+      [(service-routes)
+       (reports-routes)
+       (users-routes)]]])
    (ring/routes
     (swagger-ui/create-swagger-ui-handler
      {:path   "/swagger-ui"

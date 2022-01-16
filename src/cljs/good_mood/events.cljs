@@ -38,6 +38,17 @@
                   :response-format (ajax/raw-response-format)
                   :on-success       [:set-docs]}}))
 
+(rf/reg-event-fx
+ :common/fetch-reports
+ (fn [{:keys [db]} _]
+   {:db (assoc db :common/loading true)
+    :http-xhrio {:method :get
+                 :uri "/api/reports"
+                 :response-format (ajax/json-response-format {:keywords? true})
+                 :on-success [:common/fetch-reports-success]
+                 :on-failure [:common/fetch-reports-failure]
+                 }}))
+
 (rf/reg-event-db
   :common/set-error
   (fn [db [_ error]]
@@ -47,6 +58,11 @@
   :page/init-home
   (fn [_ _]
     {:dispatch [:fetch-docs]}))
+
+(rf/reg-event-db
+ :common/set-name
+ (fn [db [_ name]]
+   (assoc db :common/name name)))
 
 ;;subscriptions
 
@@ -76,3 +92,31 @@
   :common/error
   (fn [db _]
     (:common/error db)))
+
+(rf/reg-sub
+ :common/name
+ (fn [db _]
+   (:common/name db)))
+
+(rf/reg-sub
+ :common/loading
+ (fn [db _]
+   (:common/loading db)))
+
+(rf/reg-event-db
+ :common/fetch-reports-success
+ (fn [db [_ {:keys [data]}]]
+   (-> db
+       (assoc :common/loading false)
+       (assoc :common/reports data))))
+
+(rf/reg-event-db
+ :common/fetch-reports-failure
+ (fn [db [_ data]]
+   (println "FAILED" data)
+   db))
+
+(rf/reg-sub
+ :common/reports
+ (fn [db _]
+   (:common/reports db)))

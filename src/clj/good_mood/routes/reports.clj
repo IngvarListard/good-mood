@@ -18,13 +18,13 @@
   ;; пилим сначала без пагинации
   [_]
   {:status 200
-   :body (db/get-reports)})
+   :body {:data (db/get-reports)}})
 
 (defn get-report-by-id
   [{:keys [parameters]}]
   (let [id (:path parameters)]
     {:status 200
-     :body (db/get-report-by-id id)}))
+     :body {:data (db/get-report-by-id id)}}))
 
 (defn create-report
   [{:keys [parameters]}]
@@ -38,7 +38,7 @@
                     (db/create-report!))]
     (println "REPORTID" report-id)
     {:status 201
-     :body (db/get-report-by-id report-id)}))
+     :body {:data (db/get-report-by-id report-id)}}))
 
 (defn update-report
   [{:keys [parameters]}]
@@ -49,7 +49,8 @@
 
     (if (= 1 updated-count)
       {:status 200
-       :body (db/get-report-by-id {:id id})}
+       :body {:data (db/get-report-by-id {:id id})
+              :result true}}
       {:status 404
        :error (format "Error while updating: updated count is %s. Should be 1" updated-count)})
     ))

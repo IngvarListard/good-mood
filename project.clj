@@ -44,7 +44,8 @@
                  [ring/ring-defaults "0.3.3"]
                  [selmer "1.12.45"]
                  [thheller/shadow-cljs "2.16.7" :scope "provided"]
-                 [camel-snake-kebab "0.4.2"]]
+                 [camel-snake-kebab "0.4.2"]
+                 [arttuka/reagent-material-ui "5.2.4-0"]]
 
   :min-lein-version "2.0.0"
   
