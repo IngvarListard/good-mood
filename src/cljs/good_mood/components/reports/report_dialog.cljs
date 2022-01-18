@@ -1,19 +1,28 @@
 (ns good-mood.components.reports.report-dialog
+  (:require-macros [reagent-mui.util :refer [react-component]])
   (:require
    [reagent.core :as r]
    [react]
    [reagent-mui.material.dialog :refer [dialog]]
    [reagent-mui.material.button :refer [button]]
    [reagent-mui.material.icon-button :refer [icon-button]]
-   [reagent-mui.material.dialog-title :refer [dialog-title]]
    [reagent-mui.material.slide :refer [slide]]
    [reagent-mui.material.divider :refer [divider]]
    [reagent-mui.material.app-bar :refer [app-bar]]
    [reagent-mui.material.toolbar :refer [toolbar]]
    [reagent-mui.material.typography :refer [typography]]
-   [reagent-mui.icons.close :refer [close] :rename {close close-icon}]
+   [reagent-mui.material.slider :refer [slider]]
+   [reagent-mui.material.container :refer [container]]
+   [reagent-mui.material.text-field :refer [text-field]]
+   ["@mui/lab/DatePicker" :default DatePicker]
+   ["@mui/lab/LocalizationProvider" :default LocalizationProvider]
+   ["@mui/lab/AdapterDateFns" :default AdapterDateFns]
+   ["@mui/material/TextField" :default TextField]
+   [reagent-mui.icons.close :refer [close] :rename {close close-icon}]))
 
-   ))
+(defn event-value
+  [e]
+  (.. e -target -value))
 
 (def transition
   "не работает
@@ -25,29 +34,91 @@
         (set! (.-direction props) "up")
         (r/create-element slide props)))))
 
+
 (defn top-bar [{:keys [close]}]
   [app-bar {:sx {:position "relative"}}
    [toolbar
-    [icon-button {:edge "start"
-                  :color "inherit"
-                  :on-click close
-                  :aria-label "close"}
+    [icon-button
+     {:edge "start"
+      :color "inherit"
+      :on-click close
+      :aria-label "close"}
      [close-icon]]
-    [typography {:sx {:ml 2 :flex 1}
-                 :variant "h6"
-                 :component "div"}
+    [typography
+     {:sx {:ml 2 :flex 1}
+      :variant "h6"
+      :component "div"}
      "Sound"]
-    [button {:auto-focus true
-             :color "inherit"
-             :on-click close}
+    [button
+     {:auto-focus true
+      :color "inherit"
+      :on-click close}
      "Save"]]])
 
-(defn dialog-body [])
+(defn grade-slider [{:keys [aria-label value on-change]}]
+  [slider
+   {:aria-label aria-label
+    :value value
+    :on-change on-change
+    :default-value 7
+    :value-label-display "auto"
+    :step 1
+    :marks true
+    :min 1
+    :max 10}])
+
+(defn dialog-form [{:keys [value on-change on-text-change]}]
+  [:div
+   [grade-slider
+    {:aria-label "Настроение"
+     :value (value :mood-grade)
+     :on-change (on-change :mood-grade)}]
+   [grade-slider
+    {:aria-label "Активность"
+     :value (value :activity-grade)
+     :on-change (on-change :activity-grade)}]
+   [grade-slider
+    {:aria-label "Счастье"
+     :value (value :happiness-grade)
+     :on-change (on-change :happiness-grade)}]
+   [divider]
+
+   [:div
+    [text-field
+     {:multiline true
+      :value (value :comment)
+      :on-change (on-text-change :comment)}]]
+
+   [:div
+    [:> LocalizationProvider
+     {:dateAdapter AdapterDateFns}
+     [:> DatePicker
+      {:label "Report date"
+       :value (value :report-date)
+       :on-change (on-change :report-date)
+       :render-input (fn [p] (r/create-element TextField p))}]]]
+   ])
 
 (defn create-report-dialog []
   (let [opened? (r/atom false)
         open #(reset! opened? true)
-        close #(reset! opened? false)]
+        close #(reset! opened? false)
+        report-form (r/atom
+                      {:user-id 1
+                       :mood-grade 7
+                       :activity-grade 7
+                       :happiness-grade 7
+                       :details nil
+                       :report-date nil
+                       :comment "asdfasdf"})
+        on-change (fn [^Keyword field]
+                    (fn [_ val]
+                      (swap! report-form assoc field val)))
+        on-text-change (fn [^Keyword field]
+                         (fn [e]
+                           (swap! report-form assoc field (event-value e))))
+        value #(get @report-form %)]
+
     (fn []
       (println "dialog rendered" @opened?)
       [:div
@@ -59,6 +130,13 @@
        [dialog
         {:full-screen true
          :open @opened?}
+
         [top-bar {:close close}]
-        [:div "Hey yo"]
-        ]])))
+
+        [container
+         {:max-width "xl"}
+
+         [dialog-form
+          {:value value
+           :on-change on-change
+           :on-text-change on-text-change}]]]])))

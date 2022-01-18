@@ -7,12 +7,15 @@ create table reports (
   happiness_grade INTEGER check (happiness_grade > 0 and happiness_grade <= 10),
   details json,
   report_date TIMESTAMP not null default current_timestamp,
-  added_at TIMESTAMP not null default current_timestamp
+  added_at TIMESTAMP not null default current_timestamp,
+  details_schema_id integer references users (id)
 );
 --;;
 create table details_schema (
 	id serial primary key,
-	user_id integer references users(id)
+  detail_items_ids integer[],
+  description text,
+  created_by integer references users(id)
 );
 --;;
 create table detail_type (
