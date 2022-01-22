@@ -87,25 +87,27 @@
 (defn reports-routes
   []
   ["/reports"
-    ["/"
-     {:get get-reports
-      :post {:parameters {:body {:user-id int?
-                                 :comment string?
-                                 :mood-grade int?
-                                 :activity-grade int?
-                                 :happiness-grade int?
-                                 :details any?
-                                 :report-date string?}}
-             :handler create-report}}]
-    ["/:id"
-     {:parameters {:path {:id int?}}
-      :get get-report-by-id
-      :put {:parameters {:body {:user-id int?
-                                :comment string?
-                                :mood-grade int?
-                                :activity-grade int?
-                                :happiness-grade int?
-                                :details any?
-                                :report-date string?}}
-            :handler update-report}
-      :delete delete-report}]])
+   ["/"
+    {:get get-reports
+     :post {:parameters {:body [:map [[:user-id :int]
+                                      [:comment :string]
+                                      ;; [:mood-grade int?]
+                                      ;; [:activity-grade int?]
+                                      ;; [:happiness-grade int?]
+                                      ;; [:details any?]
+                                      ;; [:report-date string?]
+                                      ]]}
+            :handler create-report}}]
+   ;; ["/:id"
+   ;;  {:parameters {:path {:id int?}}
+   ;;   :get get-report-by-id
+   ;;   :put {:parameters {:body {:user-id int?
+   ;;                             :comment string?
+   ;;                             :mood-grade int?
+   ;;                             :activity-grade int?
+   ;;                             :happiness-grade int?
+   ;;                             :details any?
+   ;;                             :report-date string?}}
+   ;;         :handler update-report}
+   ;;   :delete delete-report}]
+   ])

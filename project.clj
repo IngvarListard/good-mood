@@ -46,7 +46,8 @@
                  [thheller/shadow-cljs "2.16.7" :scope "provided"]
                  [camel-snake-kebab "0.4.2"]
                  [arttuka/reagent-material-ui "5.2.4-0"]
-                 [metosin/malli "0.7.5"]]
+                 [metosin/malli "0.7.5"]
+                 [org.babashka/sci "0.2.8"]]
 
   :min-lein-version "2.0.0"
   

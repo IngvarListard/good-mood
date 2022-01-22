@@ -1,0 +1,20 @@
+* good-mood
+
+#+begin_src sh
+# запуск БД
+docker-compose up -d
+
+# установка зависимостей фронта
+yarn install
+#+end_src
+
+
+Создать файлы конфигов ~test-config.edn~ и ~dev-config.edn~
+
+#+begin_src
+# Запуск бэка
+lein run -p 8000
+
+# запуск фронта
+npx shadow-cljs watch app
+#+end_src

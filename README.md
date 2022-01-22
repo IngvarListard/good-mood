@@ -1,3 +1,0 @@
-# good-mood
-
-    lein run 
