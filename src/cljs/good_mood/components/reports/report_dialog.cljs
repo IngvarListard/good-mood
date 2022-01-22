@@ -2,7 +2,9 @@
   (:require-macros [reagent-mui.util :refer [react-component]])
   (:require
    [reagent.core :as r]
+   [re-frame.core :as rf]
    [react]
+   [good-mood.reducers.reports :as reports]
    [reagent-mui.material.dialog :refer [dialog]]
    [reagent-mui.material.button :refer [button]]
    [reagent-mui.material.icon-button :refer [icon-button]]
@@ -35,7 +37,7 @@
         (r/create-element slide props)))))
 
 
-(defn top-bar [{:keys [close]}]
+(defn top-bar [{:keys [close save]}]
   [app-bar {:sx {:position "relative"}}
    [toolbar
     [icon-button
@@ -52,7 +54,7 @@
     [button
      {:auto-focus true
       :color "inherit"
-      :on-click close}
+      :on-click save}
      "Save"]]])
 
 (defn grade-slider [{:keys [aria-label value on-change]}]
@@ -67,7 +69,8 @@
     :min 1
     :max 10}])
 
-(defn dialog-form [{:keys [value on-change on-text-change]}]
+(defn dialog-form [{:keys [value on-change on-text-change on-date-change]}]
+  ;; слайдеры
   [:div
    [grade-slider
     {:aria-label "Настроение"
@@ -87,7 +90,8 @@
     [text-field
      {:multiline true
       :value (value :comment)
-      :on-change (on-text-change :comment)}]]
+      :on-change (on-text-change :comment)
+      :aria-label "Комментарий"}]]
 
    [:div
     [:> LocalizationProvider
@@ -95,9 +99,16 @@
      [:> DatePicker
       {:label "Report date"
        :value (value :report-date)
-       :on-change (on-change :report-date)
-       :render-input (fn [p] (r/create-element TextField p))}]]]
-   ])
+       :on-change (on-date-change :report-date)
+       :render-input (fn [p] (r/create-element TextField p))}]]]])
+
+(comment
+
+  (let [d (new js/Date)
+        t (.toISOString d)]
+    (println t)
+    t)
+  )
 
 (defn create-report-dialog []
   (let [opened? (r/atom false)
@@ -117,7 +128,12 @@
         on-text-change (fn [^Keyword field]
                          (fn [e]
                            (swap! report-form assoc field (event-value e))))
-        value #(get @report-form %)]
+        on-date-change (fn [^Keyword field]
+                         (fn [val]
+                           (println val @report-form)
+                           (swap! report-form assoc field (.toISOString val))))
+        value #(get @report-form %)
+        save #(rf/dispatch [::reports/create-report @report-form])]
 
     (fn []
       (println "dialog rendered" @opened?)
@@ -131,7 +147,9 @@
         {:full-screen true
          :open @opened?}
 
-        [top-bar {:close close}]
+        [top-bar
+         {:close close
+          :save save}]
 
         [container
          {:max-width "xl"}
@@ -139,4 +157,5 @@
          [dialog-form
           {:value value
            :on-change on-change
-           :on-text-change on-text-change}]]]])))
+           :on-text-change on-text-change
+           :on-date-change on-date-change}]]]])))

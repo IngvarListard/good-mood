@@ -45,7 +45,8 @@
                  [selmer "1.12.45"]
                  [thheller/shadow-cljs "2.16.7" :scope "provided"]
                  [camel-snake-kebab "0.4.2"]
-                 [arttuka/reagent-material-ui "5.2.4-0"]]
+                 [arttuka/reagent-material-ui "5.2.4-0"]
+                 [metosin/malli "0.7.5"]]
 
   :min-lein-version "2.0.0"
   
