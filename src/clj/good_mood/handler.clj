@@ -62,11 +62,11 @@
                       coercion/coerce-request-middleware
                       ;; multipart
                       multipart/multipart-middleware]}
-        [
-         ;; (service-routes)
+        [(service-routes)
          (reports-routes)
-         ;; (users-routes)
+         (users-routes)
          ]]])
+
     (ring/routes
       (swagger-ui/create-swagger-ui-handler
         {:path   "/swagger-ui"

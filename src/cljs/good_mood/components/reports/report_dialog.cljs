@@ -4,11 +4,13 @@
    [reagent.core :as r]
    [re-frame.core :as rf]
    [react]
+   [malli.core :as m]
+   [malli.util :as mu]
+   [malli.error :as me]
    [good-mood.reducers.reports :as reports]
    [reagent-mui.material.dialog :refer [dialog]]
    [reagent-mui.material.button :refer [button]]
    [reagent-mui.material.icon-button :refer [icon-button]]
-   [reagent-mui.material.slide :refer [slide]]
    [reagent-mui.material.divider :refer [divider]]
    [reagent-mui.material.app-bar :refer [app-bar]]
    [reagent-mui.material.toolbar :refer [toolbar]]
@@ -16,25 +18,26 @@
    [reagent-mui.material.slider :refer [slider]]
    [reagent-mui.material.container :refer [container]]
    [reagent-mui.material.text-field :refer [text-field]]
+   [reagent-mui.material.slide :refer [slide]]
    ["@mui/lab/DatePicker" :default DatePicker]
    ["@mui/lab/LocalizationProvider" :default LocalizationProvider]
    ["@mui/lab/AdapterDateFns" :default AdapterDateFns]
    ["@mui/material/TextField" :default TextField]
-   [reagent-mui.icons.close :refer [close] :rename {close close-icon}]))
+   ["@mui/material/Slide" :as Slide]
+   [reagent-mui.icons.close :refer [close] :rename {close close-icon}]
+   [good-mood.reports-schemes :refer [new-report]]))
 
 (defn event-value
   [e]
   (.. e -target -value))
 
-(def transition
-  "не работает
-  https://github.com/reagent-project/reagent/blob/c214466bbcf099eafdfe28ff7cb91f99670a8433/examples/react-mde/src/example/core.cljs
-  forward-ref example"
-  (react/forwardRef
-    (fn [props ref]
-      (let [props (assoc (js->clj props) :ref ref)]
-        (set! (.-direction props) "up")
-        (r/create-element slide props)))))
+(def Transition
+  ;; почти работает, только не в ту сторону
+  (react/forwardRef (fn [props ref]
+                      (set! (.-ref props) ref)
+                      (set! (.-direction props) "up")
+                      (js/console.log (.-ref props))
+                      (react/createElement Slide/default props))))
 
 
 (defn top-bar [{:keys [close save]}]
@@ -66,12 +69,18 @@
     :value-label-display "auto"
     :step 1
     :marks true
-    :min 1
+    :min 1 3 2
     :max 10}])
 
+
+(defn validate [schema value]
+  {:error? (not (m/validate schema value))
+   :error-message (me/humanize (m/explain schema value))})
+
 (defn dialog-form [{:keys [value on-change on-text-change on-date-change]}]
-  ;; слайдеры
-  [:div
+  (let [comment-schema (mu/get new-report :comment)
+        comment-error (validate comment-schema (value :comment))]
+    [:div
    [grade-slider
     {:aria-label "Настроение"
      :value (value :mood-grade)
@@ -85,13 +94,14 @@
      :value (value :happiness-grade)
      :on-change (on-change :happiness-grade)}]
    [divider]
-
    [:div
     [text-field
      {:multiline true
       :value (value :comment)
       :on-change (on-text-change :comment)
-      :aria-label "Комментарий"}]]
+      :aria-label "Комментарий"
+      :helper-text (or (-> comment-error :error-message first) "Введите комментарий")
+      :error (comment-error :error?)}]]
 
    [:div
     [:> LocalizationProvider
@@ -101,13 +111,6 @@
        :value (value :report-date)
        :on-change (on-date-change :report-date)
        :render-input (fn [p] (r/create-element TextField p))}]]]])
-
-(comment
-
-  (let [d (new js/Date)
-        t (.toISOString d)]
-    (println t)
-    t)
   )
 
 (defn create-report-dialog []
@@ -136,7 +139,6 @@
         save #(rf/dispatch [::reports/create-report @report-form])]
 
     (fn []
-      (println "dialog rendered" @opened?)
       [:div
        [button {:variant "contained"
                 :color "primary"
@@ -145,7 +147,9 @@
         "Create report"]
        [dialog
         {:full-screen true
-         :open @opened?}
+         :TransitionComponent Transition
+         :open @opened?
+         :on-close close}
 
         [top-bar
          {:close close

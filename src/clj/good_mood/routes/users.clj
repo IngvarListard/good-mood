@@ -56,15 +56,18 @@
   []
   ["/users"
    ["/" {:get get-users
-         :post {:parameters {:body {:first-name string?
-                                    :last-name string?
-                                    :email string?
-                                    :pass string?}}
+         :post {:parameters {:body [:map
+                                    [:first-name string?]
+                                    [:last-name string?]
+                                    [:email string?]
+                                    [:pass string?]]}
                 :handler create-user!}}]
-   ["/:id" {:parameters {:path {:id int?}}
-            :get get-user
-            :put {:parameters {:body {:first-name string?
-                                      :last-name string?
-                                      :email string?}}
-                  :handler update-user!}
-            :delete delete-user!}]])
+   ;; ["/:id" {:parameters {:path [:map [:id int?]]}
+   ;;          :get get-user
+   ;;          :put {:parameters {:body [:map
+   ;;                                    [:first-name string?]
+   ;;                                    [:last-name string?]
+   ;;                                    [:email string?]]}
+   ;;                :handler update-user!}
+   ;;          :delete delete-user!}]
+   ])
