@@ -27,7 +27,6 @@ create table detail_type (
 create table detail_item (
 	id serial primary key,
 	detail_type_id integer references detail_type (id),
-	fields_names text[],
-	fields_types text[],
-	nested_ids integer[]
+	nested_ids integer[],
+  schema jsonb
 );
