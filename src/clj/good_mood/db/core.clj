@@ -20,7 +20,7 @@
              *db*))
   :stop (conman/disconnect! *db*))
 
-(conman/bind-connection *db* "sql/queries.sql" "sql/reports.sql")
+(conman/bind-connection *db* "sql/queries.sql" "sql/reports.sql" "sql/schemes.sql")
 
 (defn pgobj->clj [^org.postgresql.util.PGobject pgobj]
   (let [type (.getType pgobj)
