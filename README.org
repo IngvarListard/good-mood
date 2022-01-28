@@ -11,7 +11,7 @@ yarn install
 
 Создать файлы конфигов ~test-config.edn~ и ~dev-config.edn~
 
-#+begin_src
+#+begin_src sh
 # Запуск бэка
 lein run -p 8000
 
