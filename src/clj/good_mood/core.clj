@@ -2,12 +2,14 @@
   (:require
     [good-mood.handler :as handler]
     [good-mood.nrepl :as nrepl]
+    [clojure.tools.nrepl.server :as nrepl-server]
     [luminus.http-server :as http]
     [luminus-migrations.core :as migrations]
     [good-mood.config :refer [env]]
     [clojure.tools.cli :refer [parse-opts]]
     [clojure.tools.logging :as log]
-    [mount.core :as mount])
+    [mount.core :as mount]
+    [cider.nrepl :refer [cider-middleware]])
   (:gen-class))
 
 ;; log uncaught exceptions in threads
@@ -31,6 +33,7 @@
         (select-keys [:handler :host :port])))
   :stop
   (http/stop http-server))
+
 
 (mount/defstate ^{:on-reload :noop} repl-server
   :start

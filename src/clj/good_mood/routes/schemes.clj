@@ -4,23 +4,23 @@
    [muuntaja.core :as m]))
 
 (defn get-schemas-for-user
-  [uid]
-
+  [{:keys [user-id]}]
   (let [schemas (db/get-schemas)]
-    (->> schemas
-         (mapcat :detail-items-ids)
-         (#(db/get-details-by-ids {:ids %}))
-         (map #(do {(:id %) %}))
-         (apply merge)
-         ((fn [grouped]
-            (map (fn [{ids :detail-items-ids :as schema}]
-                   (assoc schema :details (map grouped ids)))
-                 schemas))))))
-
+    ;; больше так делать не буду. рефачить лень.
+    {:status 200
+     :body (->> schemas
+                (mapcat :detail-items-ids)
+                (#(db/get-details-by-ids {:ids %}))
+                (map #(do {(:id %) %}))
+                (apply merge)
+                ((fn [grouped]
+                   (map (fn [{ids :detail-items-ids :as schema}]
+                          (assoc schema :details (map grouped ids)))
+                        schemas))))}))
 
 (comment
 
-(get-schemas-for-user 100)
+(get-schemas-for-user {})
 
   (db/get-schema)
 
@@ -48,26 +48,15 @@
 (let [schemas (db/get-schemas)]
     (->> schemas
          (group-by :detail-items-ids)
-         )
-;; так что нужно сделать
-;; объединить массивы данных
-;; в одном есть [1 2] { } [3 4] {  }
-;; в другом есть [1 2 3 4]
-;; значит нужно пройтись по всем хуйням вторым
-;; не, надо пройтись по всем первым
-;; иду я по ним и ищу в массиве пересечения
-;; а мне надо вывернуть значит по id
-;; выворачиваю значит по id получается
-;; {1: {}
-;; 2: {}
-;; 3: {}}
-;; И я такой беру прохожусь по всем первым, а потом по их
-;; элементам
-;; цикл в цикле получается
-
-    )
+         ))
 
 
 
-
+;; :parameters {:body [:map [:user-id {:optional true} any?]]}
 )
+
+(defn schemas-routes
+  []
+  ["/schemas"
+   ["/"
+    {:get get-schemas-for-user}]])

@@ -8,6 +8,7 @@
     [good-mood.routes.services :refer [service-routes]]
     [good-mood.routes.reports :refer [reports-routes]]
     [good-mood.routes.users :refer [users-routes]]
+    [good-mood.routes.schemes :refer [schemas-routes]]
     [reitit.swagger-ui :as swagger-ui]
     [reitit.ring :as ring]
     [ring.middleware.content-type :refer [wrap-content-type]]
@@ -65,6 +66,7 @@
         [(service-routes)
          (reports-routes)
          (users-routes)
+         (schemas-routes)
          ]]])
 
     (ring/routes

@@ -83,16 +83,44 @@
                                  [re-frisk "1.5.2"]
                                  [ring/ring-devel "1.9.4"]
                                  [ring/ring-mock "0.4.0"]
-                                 [camel-snake-kebab "0.4.2"]]
+                                 [camel-snake-kebab "0.4.2"]
+                                 [org.clojure/tools.nrepl "0.2.13"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.24.1"]
                                  [jonase/eastwood "0.3.5"]
-                                 [cider/cider-nrepl "0.27.3"]]
+                                 ;; [cider/cider-nrepl "0.27.3"]
+                                 ;; [mx.cider/enrich-classpath "1.8.0"]
+                                 ]
                   
                   
                   :source-paths ["env/dev/clj"  "env/dev/cljs" "test/cljs" ]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user
-                                 :timeout 120000}
+                                 :timeout 120000
+                                 ;; :nrepl-middleware
+                                 ;; [cider.nrepl/wrap-apropos
+                                 ;;  cider.nrepl/wrap-classpath
+                                 ;;  cider.nrepl/wrap-clojuredocs
+                                 ;;  cider.nrepl/wrap-complete
+                                 ;;  cider.nrepl/wrap-debug
+                                 ;;  cider.nrepl/wrap-format
+                                 ;;  cider.nrepl/wrap-info
+                                 ;;  cider.nrepl/wrap-inspect
+                                 ;;  cider.nrepl/wrap-macroexpand
+                                 ;;  cider.nrepl/wrap-ns
+                                 ;;  cider.nrepl/wrap-spec
+                                 ;;  cider.nrepl/wrap-profile
+                                 ;;  cider.nrepl/wrap-refresh
+                                 ;;  cider.nrepl/wrap-resource
+                                 ;;  cider.nrepl/wrap-stacktrace
+                                 ;;  cider.nrepl/wrap-test
+                                 ;;  cider.nrepl/wrap-trace
+                                 ;;  cider.nrepl/wrap-out
+                                 ;;  cider.nrepl/wrap-undef
+                                 ;;  cider.nrepl/wrap-version
+                                 ;;  cider.nrepl/wrap-xref
+                                 ;;  cider.nrepl/cider-middleware]
+                                 ;; :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]
+                                 }
                   :injections [(require 'pjstadig.humane-test-output)
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:jvm-opts ["-Dconf=test-config.edn" ]
