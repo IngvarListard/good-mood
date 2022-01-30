@@ -8,15 +8,15 @@
   (let [schemas (db/get-schemas)]
     ;; больше так делать не буду. рефачить лень.
     {:status 200
-     :body (->> schemas
-                (mapcat :detail-items-ids)
-                (#(db/get-details-by-ids {:ids %}))
-                (map #(do {(:id %) %}))
-                (apply merge)
-                ((fn [grouped]
-                   (map (fn [{ids :detail-items-ids :as schema}]
-                          (assoc schema :details (map grouped ids)))
-                        schemas))))}))
+     :body {:data (->> schemas
+                       (mapcat :detail-items-ids)
+                       (#(db/get-details-by-ids {:ids %}))
+                       (map #(do {(:id %) %}))
+                       (apply merge)
+                       ((fn [grouped]
+                          (map (fn [{ids :detail-items-ids :as schema}]
+                                 (assoc schema :details (map grouped ids)))
+                               schemas))))}}))
 
 (comment
 

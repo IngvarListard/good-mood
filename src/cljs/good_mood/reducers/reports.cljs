@@ -10,7 +10,6 @@
 (rf/reg-event-fx
  ::create-report
  (fn [{:keys [db]} [_ report-params]]
-   (println report-params)
    {:db (assoc db ::loading true)
     :http-xhrio {:method :post
                  :uri "/api/reports"
@@ -18,19 +17,49 @@
                  :params report-params
                  :format (ajax/json-request-format)
                  :response-format (ajax/json-response-format {:keywords? true})
-                 :on-success [::create-user-success]
+                 :on-success [::create-report-success]
                  :on-failure [::set-error]}}))
 
+(rf/reg-event-fx
+ ::get-user-report-schema
+ (fn [{:keys [db]} [_ user-id]]
+   (println "asdfasdfasdasdfasdf")
+   {:db (update db ::loading inc)
+    :http-xhrio {:method :get
+                 :uri "/api/schemas"
+                 :timeout 5000
+                 :params {:user-id user-id}
+                 :format (ajax/json-request-format)
+                 :response-format (ajax/json-response-format {:keywords? true})
+                 :on-success [::fill-user-schemas]
+                 :on-failure [::set-error]}}))
 
 ;; db
 (rf/reg-event-db
-  ::set-error
-  (fn [db [_ error]]
-    (assoc db ::error error)))
+ ::set-error
+ (fn [db [_ error]]
+   (-> db
+       (update ::loading dec)
+       (assoc ::error error))))
 
 (rf/reg-event-db
- ::create-user-success
+::fill-user-schemas
+ (fn [db [_ {:keys [data]}]]
+   (println "DATA IS SHIT" data )
+   (js/console.log data)
+   (-> db
+       (update ::loading dec)
+       (assoc ::user-schemas (conj (::user-schemas db) data)))))
+
+(rf/reg-event-db
+ ::create-report-success
  (fn [db [_ {:keys [data]}]]
    (-> db
-       (assoc ::loading false)
+       (update ::loading dec)
        (assoc :common/reports (conj (:common/report db) data)))))
+
+;; subscriptions
+(rf/reg-sub
+ ::user-schemas
+ (fn [db _]
+   (::user-schemas db)))

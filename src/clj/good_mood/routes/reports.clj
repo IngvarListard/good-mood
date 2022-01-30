@@ -84,5 +84,4 @@
                                [:details any?]
                                [:report-date string?]]}
            :handler update-report}
-     :delete delete-report}]
-   ])
+     :delete delete-report}]])

@@ -25,7 +25,8 @@
    ["@mui/material/TextField" :default TextField]
    ["@mui/material/Slide" :as Slide]
    [reagent-mui.icons.close :refer [close] :rename {close close-icon}]
-   [good-mood.reports-schemes :refer [new-report]]))
+   [good-mood.reports-schemes :refer [new-report]]
+   [good-mood.components.reports.schemas :refer [add-details-dialog]]))
 
 (defn event-value
   [e]
@@ -69,7 +70,7 @@
     :value-label-display "auto"
     :step 1
     :marks true
-    :min 1 3 2
+    :min 1
     :max 10}])
 
 
@@ -110,13 +111,14 @@
       {:label "Report date"
        :value (value :report-date)
        :on-change (on-date-change :report-date)
-       :render-input (fn [p] (r/create-element TextField p))}]]]])
-  )
+       :render-input (fn [p] (r/create-element TextField p))}]]]
+     [:div
+      [add-details-dialog]]]))
 
 (defn create-report-dialog []
   (let [opened? (r/atom false)
-        open #(reset! opened? true)
-        close #(reset! opened? false)
+        open! #(reset! opened? true)
+        close! #(reset! opened? false)
         report-form (r/atom
                       {:user-id 1
                        :mood-grade 7
@@ -125,41 +127,41 @@
                        :details nil
                        :report-date nil
                        :comment "asdfasdf"})
-        on-change (fn [^Keyword field]
+        on-change! (fn [^Keyword field]
                     (fn [_ val]
                       (swap! report-form assoc field val)))
-        on-text-change (fn [^Keyword field]
+        on-text-change! (fn [^Keyword field]
                          (fn [e]
                            (swap! report-form assoc field (event-value e))))
-        on-date-change (fn [^Keyword field]
+        on-date-change! (fn [^Keyword field]
                          (fn [val]
                            (println val @report-form)
                            (swap! report-form assoc field (.toISOString val))))
         value #(get @report-form %)
-        save #(rf/dispatch [::reports/create-report @report-form])]
+        save! #(rf/dispatch [::reports/create-report @report-form])]
 
     (fn []
       [:div
        [button {:variant "contained"
                 :color "primary"
-                :on-click open
-                :on-close close}
+                :on-click open!
+                :on-close close!}
         "Create report"]
        [dialog
         {:full-screen true
          :TransitionComponent Transition
          :open @opened?
-         :on-close close}
+         :on-close close!}
 
         [top-bar
-         {:close close
-          :save save}]
+         {:close close!
+          :save save!}]
 
         [container
          {:max-width "xl"}
 
          [dialog-form
           {:value value
-           :on-change on-change
-           :on-text-change on-text-change
-           :on-date-change on-date-change}]]]])))
+           :on-change on-change!
+           :on-text-change on-text-change!
+           :on-date-change on-date-change!}]]]])))
