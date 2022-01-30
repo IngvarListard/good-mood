@@ -45,11 +45,22 @@
 (rf/reg-event-db
 ::fill-user-schemas
  (fn [db [_ {:keys [data]}]]
-   (println "DATA IS SHIT" data )
-   (js/console.log data)
-   (-> db
+
+   (let [user-schemas (concat (::user-schemas db) data)
+         unique-schemas (map first (vals (group-by :id user-schemas)))]
+
+     (-> db
        (update ::loading dec)
-       (assoc ::user-schemas (conj (::user-schemas db) data)))))
+       (assoc ::user-schemas unique-schemas)))))
+
+
+(comment
+
+  (conj nil [1 2 3])
+
+
+
+  )
 
 (rf/reg-event-db
  ::create-report-success

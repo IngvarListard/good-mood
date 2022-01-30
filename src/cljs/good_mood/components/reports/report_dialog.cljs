@@ -37,7 +37,6 @@
   (react/forwardRef (fn [props ref]
                       (set! (.-ref props) ref)
                       (set! (.-direction props) "up")
-                      (js/console.log (.-ref props))
                       (react/createElement Slide/default props))))
 
 
@@ -144,8 +143,7 @@
       [:div
        [button {:variant "contained"
                 :color "primary"
-                :on-click open!
-                :on-close close!}
+                :on-click open!}
         "Create report"]
        [dialog
         {:full-screen true

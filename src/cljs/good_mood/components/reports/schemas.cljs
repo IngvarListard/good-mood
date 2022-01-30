@@ -18,13 +18,16 @@
   []
   (let [_ (rf/dispatch [::reports/get-user-report-schema])
         opened? (r/atom false)
-        selected (r/atom nil)
-        on-change! #(reset! selected %)
+        selected (r/atom "")
+        set-value! #(reset! selected (.-id %))
+        input-value (r/atom "")
+        set-input-value! #(reset! input-value %)
         open! #(reset! opened? true)
         close! #(reset! opened? false)
         save! #(println "save butt on plug")]
     (fn []
       (let [user-schemas (rf/subscribe [::reports/user-schemas])]
+        ;; (cljs.pprint/pprint (first @user-schemas))
         [:div
          [icon-button
           {:edge "start"
@@ -43,11 +46,17 @@
            "Here we go again"]
 
           [dialog-content
+           [autocomplete
+            {:render-input (fn [p] (r/create-element TextField p))
+             :options (or @user-schemas [])
+             :disable-portal true
+             :on-change set-value!
+             :get-option-label (fn [opt] (.-description opt))
+             :input-value @input-value
+             :on-input-change set-input-value!
+             :value "1"
+             }]
            [dialog-content-text
-            [autocomplete
-             {:render-input (fn [p] (r/create-element TextField p))
-              :options @user-schemas
-              :disable-portal true}]
             "Shitty dialog content text"]
 
            [dialog-actions
