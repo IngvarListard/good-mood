@@ -37,6 +37,7 @@
   (react/forwardRef (fn [props ref]
                       (set! (.-ref props) ref)
                       (set! (.-direction props) "up")
+                      ;; (js/console.log (.-ref props))
                       (react/createElement Slide/default props))))
 
 
